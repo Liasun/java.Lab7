@@ -4,13 +4,12 @@
  */
 package bsu.rfe.serverOperations;
 
+import bsu.rfe.AuthenticationPanel;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class Authentication {
 
-    public boolean logIn(String senderName, String senderPassword,
+    public int logIn(String senderName, String senderPassword,
             String destinationAddress, int PORT) {
         boolean status = false;
         try {
@@ -34,8 +33,11 @@ public class Authentication {
             socket.close();
 
         } catch (IOException ex) {
-            System.out.println("connection error");
+             return 1;
         }
-        return status;
+        if(status) {
+                    return 0;
+        }
+        return 2;
     }
 }

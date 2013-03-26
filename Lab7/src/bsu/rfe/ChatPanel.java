@@ -12,6 +12,7 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -22,8 +23,8 @@ import javax.swing.JTextArea;
  */
 public class ChatPanel extends JPanel {
 
-    private  JTextArea textAreaIncoming;
-    private  JTextArea textAreaOutgoing;
+    private JTextArea textAreaIncoming;
+    private JTextArea textAreaOutgoing;
     private static final int INCOMING_AREA_DEFAULT_ROWS = 10;
     private static final int OUTGOING_AREA_DEFAULT_ROWS = 5;
     private JScrollPane scrollPaneIncoming;
@@ -32,11 +33,9 @@ public class ChatPanel extends JPanel {
     private JButton sendButton;
     private String userName;
     private String friendName;
-    
     private communicationServer server;
-    
- 
-    public ChatPanel(String userName,String friendName,MainPanel mainPanel) {
+
+    public ChatPanel(String userName, String friendName, MainPanel mainPanel) {
         this.userName = userName;
         this.friendName = friendName;
         createTextAreas();
@@ -44,22 +43,25 @@ public class ChatPanel extends JPanel {
         createGlobalLayout();
         this.server = mainPanel.server;
     }
+
     private void createTextAreas() {
         textAreaIncoming = new JTextArea(INCOMING_AREA_DEFAULT_ROWS, 0);
         textAreaIncoming.setEditable(false);
         scrollPaneIncoming = new JScrollPane(textAreaIncoming);
-        
+
         textAreaOutgoing = new JTextArea(OUTGOING_AREA_DEFAULT_ROWS, 0);
         scrollPaneOutgoing = new JScrollPane(textAreaOutgoing);
     }
+
     private void createMessagePanel() {
         messagePanel = new JPanel();
         messagePanel.setBorder(
                 BorderFactory.createTitledBorder("Сообщение"));
         createSendButton();
         createMessagePanelLayout();
-        
+
     }
+
     private void createSendButton() {
         sendButton = new JButton("Отправить");
         sendButton.addActionListener(new ActionListener() {
@@ -67,11 +69,11 @@ public class ChatPanel extends JPanel {
                 try {
                     sendMessage();
                 } catch (IOException ex) {
-                    
                 }
             }
         });
     }
+
     private void createMessagePanelLayout() {
         GroupLayout layout2 = new GroupLayout(messagePanel);
         messagePanel.setLayout(layout2);
@@ -87,9 +89,9 @@ public class ChatPanel extends JPanel {
                 .addComponent(scrollPaneOutgoing)
                 .addGap(10)
                 .addComponent(sendButton)
-                .addContainerGap()
-        );
+                .addContainerGap());
     }
+
     private void createGlobalLayout() {
         GroupLayout layout1 = new GroupLayout(this);
         setLayout(layout1);
@@ -106,30 +108,38 @@ public class ChatPanel extends JPanel {
                 .addComponent(messagePanel)
                 .addContainerGap());
     }
+
     private void sendMessage() throws IOException {
         Message message = prepareMessage();
-        server.sendMessage(message);
-        textAreaIncoming.append( " (" + userName + "): " +
-message.message + "\n");
-      
+
+        if (server.sendMessage(message) == false) {
+            JOptionPane.showMessageDialog(ChatPanel.this, "connection error", "message didnt send", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        textAreaIncoming.append(" (" + userName + "): "
+                + message.message + "\n");
+
     }
-    private Message prepareMessage(){
+
+    private Message prepareMessage() {
         Message message = new Message();
         message.userTo = friendName;
         message.userFrom = userName;
         message.message = textAreaOutgoing.getText();
-        if(message.message == null){
+        if (message.message == null) {
             message.message = " ";
         }
         textAreaOutgoing.setText("");
         return message;
-        
+
     }
-    public void receiveMessage(Message message){
-        textAreaIncoming.append( " (" + message.userFrom + "): " +
-message.message + "\n");
+
+    public void receiveMessage(Message message) {
+        textAreaIncoming.append(" (" + message.userFrom + "): "
+                + message.message + "\n");
     }
-    public String getFriendName(){
+
+    public String getFriendName() {
         return friendName;
     }
 }

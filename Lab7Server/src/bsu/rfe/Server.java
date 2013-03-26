@@ -9,17 +9,12 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
- 
+
 /**
  *
  * @author hlebA
@@ -116,7 +111,7 @@ public class Server {
     private void createPeers() {
         userBD.add(new Peer("hleb", "081093"));
         userBD.add(new Peer("masha", "081092"));
-        userBD.add(new Peer("anton", "081091"));
+        userBD.add(new Peer("admin", "admin"));
     }
 
     private void userEntry(Peer user) {

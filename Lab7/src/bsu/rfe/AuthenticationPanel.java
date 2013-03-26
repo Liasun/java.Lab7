@@ -4,22 +4,22 @@
  */
 package bsu.rfe;
 
-import bsu.rfe.MainPanel;
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import bsu.rfe.serverOperations.communicationServer;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -31,7 +31,10 @@ public class AuthenticationPanel extends JFrame {
     JTextField loginField;
     JTextField passwordField;
     JButton loginButton;
-    communicationServer server = new communicationServer();
+    String destinationAddress;
+    int PORT;
+    private JFileChooser fileChooser = new JFileChooser();
+    communicationServer server;
 
     public AuthenticationPanel() {
         super("Authentication");
@@ -42,6 +45,10 @@ public class AuthenticationPanel extends JFrame {
         creatFields();
         creatLoginButton();
         creatLayout();
+        File selectedFile = new File("/home/hleb/Documents/lab/Lab7/config.txt");
+        readFile(selectedFile);
+        setServer();
+
 
     }
 
@@ -67,12 +74,11 @@ public class AuthenticationPanel extends JFrame {
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(loginButton))
                 .addGap(15)
-                .addComponent(currentStatus)
-                );
+                .addComponent(currentStatus));
     }
 
     private void creatMainPanel(String userName) {
-        MainPanel mainPanel = new MainPanel(userName);
+        MainPanel mainPanel = new MainPanel(userName, destinationAddress, PORT);
         mainPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -80,13 +86,17 @@ public class AuthenticationPanel extends JFrame {
         loginButton = new JButton("Enter Chat");
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
-                boolean status = false;
+                int status = 1;
                 String userName = loginField.getText();
                 String userPassword = passwordField.getText();
-                    status = server.logIn(userName, userPassword);
-                if (status) {
+                status = server.logIn(userName, userPassword);
+                if (status == 0) {
                     creatMainPanel(userName);
                     dispose();
+                }
+                if (status == 1) {
+                    JOptionPane.showMessageDialog(AuthenticationPanel.this, "connection error", "connection failed", JOptionPane.WARNING_MESSAGE);
+                    return;
                 }
                 currentStatus = new JLabel("something wrong......");
                 creatLayout();
@@ -100,5 +110,21 @@ public class AuthenticationPanel extends JFrame {
         loginField.setMaximumSize(new Dimension(150, 20));
         passwordField = new JTextField("password ");
         passwordField.setMaximumSize(new Dimension(150, 20));
+    }
+
+    private void setServer() {
+        server = new communicationServer(destinationAddress, PORT);
+    }
+
+    protected void readFile(File selectedFile) {
+        try {
+            DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
+            destinationAddress = in.readUTF();
+            PORT = in.readInt();
+            in.close();
+        } catch (IOException ex) {
+            destinationAddress = "127.0.0.1";
+            PORT = 4567;
+        }
     }
 }
