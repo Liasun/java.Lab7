@@ -108,7 +108,7 @@ public class ChatPanel extends JPanel {
                 .addComponent(messagePanel)
                 .addContainerGap());
     }
-
+ 
     private void sendMessage() throws IOException {
         Message message = prepareMessage();
 
@@ -116,6 +116,7 @@ public class ChatPanel extends JPanel {
             JOptionPane.showMessageDialog(ChatPanel.this, "connection error", "message didnt send", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        textAreaOutgoing.setText("");
         textAreaIncoming.append(" (" + userName + "): "
                 + message.message + "\n");
 
@@ -129,9 +130,7 @@ public class ChatPanel extends JPanel {
         if (message.message == null) {
             message.message = " ";
         }
-        textAreaOutgoing.setText("");
         return message;
-
     }
 
     public void receiveMessage(Message message) {

@@ -14,7 +14,6 @@ import static java.awt.image.ImageObserver.HEIGHT;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,6 +32,7 @@ public class MainPanel extends JFrame {
     JTextField findUserTextField;
     JTabbedPane tabbedPane;
     String userName;
+    
     ArrayList<ChatPanel> openDialogs = new ArrayList<ChatPanel>();
     communicationServer server;
 

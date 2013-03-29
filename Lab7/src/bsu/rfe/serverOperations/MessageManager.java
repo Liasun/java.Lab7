@@ -73,6 +73,7 @@ public class MessageManager {
             if (chat.getFriendName().equals(message.userFrom)) {
                 chat.receiveMessage(message);
                 flag++;
+                return;
             }
         }
         if (flag == 0) {

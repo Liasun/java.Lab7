@@ -68,7 +68,6 @@ public class communicationServer {
     }
 
     public int findUser(String user) throws IOException {
-        int status = 0;
         Socket socket = new Socket(destinationAddress, PORT);
         final DataOutputStream out =
                 new DataOutputStream(socket.getOutputStream());
@@ -88,6 +87,6 @@ public class communicationServer {
         }
 
         socket.close();
-        return status;
+        return 0;
     }
 }
